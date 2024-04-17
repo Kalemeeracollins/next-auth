@@ -1,0 +1,34 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "userName": "John",
+      "email": "john@com",
+      "password": "john"
+    },
+    {
+      "id": "2",
+      "userName": "Jane",
+      "email": "jane@com",
+      "password": "jane"
+    },
+    {
+      "id": "5aec",
+      "userName": "Ck Collins",
+      "email": "kalemeeracollins@outlook.com",
+      "password": "ckcoll"
+    },
+    {
+      "id": "2e9f",
+      "userName": "Ck Collins",
+      "email": "totalyourhealthafrica@gmail.com",
+      "password": "nnjnuun"
+    },
+    {
+      "id": "94cf",
+      "userName": "Peter",
+      "email": "peter@gmail.com",
+      "password": "peter"
+    }
+  ]
+}
