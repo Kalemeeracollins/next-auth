@@ -1,7 +1,7 @@
 "use client"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useState } from 'react';
@@ -74,15 +74,7 @@ function SignUp() {
           required />
         </div>
         
-        <div className="flex items-center space-x-2">
-          <Checkbox id="terms" required/>
-          <Label className="leading-none" htmlFor="terms">
-            I agree to the
-            <Link className="underline" href="#">
-              terms and conditions
-            </Link>
-          </Label>
-        </div>
+    
         <Button type="submit" className="w-full">Sign Up</Button>
       </div>
     </div>
