@@ -8,7 +8,7 @@ export default function DashboardPage() {
   const [userDetails, setUserDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const baseUrl = 'http://localhost:3000'; // Update with your API base URL
+  const baseUrl = 'http://localhost:3000/users'; // Update with your API base URL
 
   useEffect(() => {
     const sessionToken = Cookies.get('sessionToken');
@@ -21,21 +21,24 @@ export default function DashboardPage() {
 
   const fetchUserDetails = async (sessionToken) => {
     try {
-      const response = await fetch(`${baseUrl}/user`, {
-        headers: {
-          Authorization: `Bearer ${sessionToken}`
-        }
-      });
-      if (!response.ok) {
-        throw new Error('Failed to fetch user details');
+      const response = await fetch(baseUrl);
+      const users = await response.json();
+      const authenticatedUser = authenticateUser(users, sessionToken);
+      if (authenticatedUser) {
+        setUserDetails(authenticatedUser.userData);
+
+      } else {
+        throw new Error('User data not found');
       }
-      const userData = await response.json();
-      setUserDetails(userData);
       setLoading(false);
     } catch (error) {
       setError(error.message);
       setLoading(false);
     }
+  };
+
+  const authenticateUser = (users, sessionToken) => {
+    return users.find(user => user.authenticated && user.sessionToken === sessionToken);
   };
 
   const handleLogout = () => {
@@ -53,7 +56,9 @@ export default function DashboardPage() {
       ) : (
         userDetails && (
           <div>
+            <p>Name: {userDetails.name}</p>
             <p>Email: {userDetails.email}</p>
+            <p>Age: {userDetails.age}</p>
             {/* Display other user details as needed */}
           </div>
         )

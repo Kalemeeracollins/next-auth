@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 
@@ -7,44 +7,55 @@ export default function LoginPage() {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false); // State for success message
+  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const baseUrl = "http://localhost:3000/users";
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Set loading state when form is submitted
 
     try {
-      // Here you would typically send a request to your server to authenticate the user
       const response = await fetch(baseUrl);
       const users = await response.json();
 
-      // Check if the provided email exists in the fetched user data
       const existingUser = users.find(user => user.userName === userName);
 
       if (existingUser) {
-        // Account exists, proceed with authentication
         if (existingUser.password === password) {
-          // Login successful, set session token in cookie and redirect to dashboard
-          const sessionToken = 'your-session-token'; // Replace with actual session token
+          const sessionToken = 'your-session-token';
           Cookies.set('sessionToken', sessionToken, { expires: 1, path: '/' });
-          setSuccess(true); // Set success message
+          setSuccess(true);
           setTimeout(() => {
-            setSuccess(false); // Clear success message after some time
+            setSuccess(false);
           }, 5000);
           router.push('/dashboard');
         } else {
-          // Password incorrect, display error message
-          setError('Incorrect password');
+          setError('Incorrect username or password'); // More specific error message
         }
       } else {
-        // Account does not exist, display error message
-        setError('Account not found');
+        setError('Account not found'); // More specific error message
       }
     } catch (error) {
       console.error('Error logging in:', error);
       setError('An error occurred while logging in');
+    } finally {
+      setLoading(false); // Reset loading state after form submission
     }
   };
+
+  // Use effect to clear error and success messages after a certain time
+  useEffect(() => {
+    let timeout;
+    if (error || success) {
+      timeout = setTimeout(() => {
+        setError('');
+        setSuccess(false);
+      }, 5000);
+    }
+    return () => clearTimeout(timeout);
+  }, [error, success]);
 
   return (
     <div className="flex justify-center items-center h-screen">
@@ -74,10 +85,12 @@ export default function LoginPage() {
           />
         </div>
         <div className="flex items-center justify-between">
-          <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Sign In</button>
+          <button type="submit" className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+            {loading ? 'Signing In...' : 'Sign In'}
+          </button>
         </div>
         {error && <p className="text-red-500 text-xs italic mt-2">{error}</p>}
-        {success && <p className="text-green-500 text-xs italic mt-2">Login successful!</p>} {/* Success message */}
+        {success && <p className="text-green-500 text-xs italic mt-2">Login successful!</p>}
       </form>
     </div>
   );
